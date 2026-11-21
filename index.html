@@ -724,6 +724,44 @@
     margin-left: auto;
     margin-right: auto;
   }
+   /* ===== КНОПКА МУЗЫКИ ===== */
+  .music-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    border: 1px solid var(--sage);
+    color: var(--sage-dark);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 4px 15px rgba(120, 110, 95, 0.2);
+    transition: all .3s ease;
+  }
+  .music-btn:hover {
+    background: var(--sage);
+    color: #fff;
+    transform: scale(1.1);
+  }
+  
+  /* Анимация, когда музыка играет */
+  .music-btn.playing .music-icon {
+    animation: spinMusic 3s linear infinite;
+  }
+  
+  @keyframes spinMusic {
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 640px) {
+    .music-btn { bottom: 1.2rem; right: 1.2rem; width: 42px; height: 42px; font-size: 1.2rem; }
+  }
 </style>
 </head>
 <body>
@@ -998,7 +1036,13 @@
   <div class="footer-date">03 · 09 · 2027</div>
   <p class="footer-note">Будем счастливы разделить этот день с вами</p>
 </footer>
-
+<!-- МУЗЫКА -->
+<audio id="bg-music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+<button id="music-btn" class="music-btn" aria-label="Включить музыку">
+  <span class="music-icon">♪</span>
+</button>
 <script>
   /* ===== ТАЙМЕР ===== */
   const targetDate = new Date('2027-09-03T15:00:00+03:00').getTime();
@@ -1081,6 +1125,27 @@
     }, { threshold: 0.5 }); // Анимация запустится, когда календарь покажется на 50%
 
     heartObserver.observe(heartCalendar);
+  }
+   /* ===== ФОНОВАЯ МУЗЫКА ===== */
+  const music = document.getElementById('bg-music');
+  const musicBtn = document.getElementById('music-btn');
+  const musicIcon = musicBtn.querySelector('.music-icon');
+
+  if (music && musicBtn) {
+    // Устанавливаем комфортную громкость (30%)
+    music.volume = 0.3; 
+
+    musicBtn.addEventListener('click', () => {
+      if (music.paused) {
+        music.play();
+        musicBtn.classList.add('playing');
+        musicIcon.textContent = '❚❚'; // Меняем иконку на "пауза"
+      } else {
+        music.pause();
+        musicBtn.classList.remove('playing');
+        musicIcon.textContent = '♪'; // Возвращаем иконку "нота"
+      }
+    });
   }
 </script>
 </body>
